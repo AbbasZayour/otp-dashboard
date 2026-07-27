@@ -1,0 +1,297 @@
+<title>OTP Sender Recon — Signals Desk</title>
+<style>
+  :root{
+    /* neutrals biased to blue-slate — chosen, not defaulted */
+    --bg:#eef1f4; --surface:#ffffff; --surface-2:#f5f8fa; --line:#d6dde5;
+    --ink:#16202b; --ink-soft:#586675; --ink-faint:#8494a3;
+    --accent:#0e8f8f; --accent-soft:#0e8f8f22;
+    /* semantic status — distinct from accent */
+    --ok:#0f9d58; --ok-bg:#0f9d5818;
+    --warn:#c17d10; --warn-bg:#c17d1018;
+    --crit:#d64545; --crit-bg:#d6454518;
+    --wall:#4b5563; --wall-bg:#4b556318;
+    --new:#3f6d99; --new-bg:#3f6d9915;
+    --shadow:0 1px 2px #16202b0d,0 4px 16px #16202b0a;
+    --font-ui:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,"Cascadia Code","Cascadia Mono","Segoe UI Mono",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0d1218; --surface:#141c25; --surface-2:#1a2430; --line:#26333f;
+      --ink:#e6edf3; --ink-soft:#93a1b0; --ink-faint:#61707e;
+      --accent:#2fd4c4; --accent-soft:#2fd4c422;
+      --ok:#3fb950; --ok-bg:#3fb95018;
+      --warn:#e0a92b; --warn-bg:#e0a92b18;
+      --crit:#f4756b; --crit-bg:#f4756b18;
+      --wall:#9aa4b2; --wall-bg:#9aa4b214;
+      --new:#6fa8dc; --new-bg:#6fa8dc14;
+      --shadow:0 1px 2px #0006,0 6px 20px #0004;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#eef1f4; --surface:#ffffff; --surface-2:#f5f8fa; --line:#d6dde5;
+    --ink:#16202b; --ink-soft:#586675; --ink-faint:#8494a3;
+    --accent:#0e8f8f; --accent-soft:#0e8f8f22;
+    --ok:#0f9d58; --ok-bg:#0f9d5818; --warn:#c17d10; --warn-bg:#c17d1018;
+    --crit:#d64545; --crit-bg:#d6454518; --wall:#4b5563; --wall-bg:#4b556318;
+    --new:#3f6d99; --new-bg:#3f6d9915;
+    --shadow:0 1px 2px #16202b0d,0 4px 16px #16202b0a;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0d1218; --surface:#141c25; --surface-2:#1a2430; --line:#26333f;
+    --ink:#e6edf3; --ink-soft:#93a1b0; --ink-faint:#61707e;
+    --accent:#2fd4c4; --accent-soft:#2fd4c422;
+    --ok:#3fb950; --ok-bg:#3fb95018; --warn:#e0a92b; --warn-bg:#e0a92b18;
+    --crit:#f4756b; --crit-bg:#f4756b18; --wall:#9aa4b2; --wall-bg:#9aa4b214;
+    --new:#6fa8dc; --new-bg:#6fa8dc14;
+    --shadow:0 1px 2px #0006,0 6px 20px #0004;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);
+    line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1240px;margin:0 auto;padding:30px 22px 72px}
+
+  /* header */
+  header{display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end;
+    justify-content:space-between;border-bottom:2px solid var(--accent);
+    padding-bottom:18px;margin-bottom:26px}
+  .brand{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .eyebrow{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-size:clamp(22px,3.4vw,30px);margin:0;letter-spacing:-.01em;
+    text-wrap:balance;font-weight:700}
+  .sub{color:var(--ink-soft);font-size:13.5px;max-width:60ch}
+  .meta{font-family:var(--font-mono);font-size:12px;color:var(--ink-faint);
+    text-align:right;white-space:nowrap}
+  .meta b{color:var(--ink-soft);font-weight:600}
+
+  /* stat tiles */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:12px;margin-bottom:22px}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:2px}
+  .tile .n{font-family:var(--font-mono);font-size:26px;font-weight:600;
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .tile .k{font-size:12px;color:var(--ink-soft);text-transform:uppercase;
+    letter-spacing:.06em}
+  .tile.total .n{color:var(--ink)} .tile.ok .n{color:var(--ok)}
+  .tile.pending .n{color:var(--warn)} .tile.wall .n{color:var(--crit)}
+  .tile .bar{height:3px;border-radius:3px;margin-top:8px;background:var(--line)}
+  .tile.total .bar{background:var(--accent)} .tile.ok .bar{background:var(--ok)}
+  .tile.pending .bar{background:var(--warn)} .tile.wall .bar{background:var(--crit)}
+
+  /* controls */
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+  .search{flex:1 1 240px;position:relative;min-width:0}
+  .search input{width:100%;font:inherit;font-size:14px;padding:9px 12px 9px 34px;
+    border:1px solid var(--line);border-radius:9px;background:var(--surface);
+    color:var(--ink)}
+  .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);
+    width:15px;height:15px;color:var(--ink-faint)}
+  .filters{display:flex;gap:6px;flex-wrap:wrap}
+  .filters button{font:inherit;font-size:12.5px;font-family:var(--font-mono);
+    padding:7px 12px;border:1px solid var(--line);border-radius:8px;
+    background:var(--surface);color:var(--ink-soft);cursor:pointer;
+    transition:border-color .12s,color .12s,background .12s}
+  .filters button:hover{border-color:var(--accent);color:var(--ink)}
+  .filters button[aria-pressed="true"]{background:var(--accent-soft);
+    border-color:var(--accent);color:var(--ink);font-weight:600}
+  select.vert{font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);
+    border-radius:8px;background:var(--surface);color:var(--ink);cursor:pointer}
+  input:focus-visible,button:focus-visible,select:focus-visible,a:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+
+  /* table */
+  .tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    box-shadow:var(--shadow);overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:860px}
+  thead th{position:sticky;top:0;background:var(--surface-2);z-index:1;
+    text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink-soft);font-weight:600;padding:11px 14px;
+    border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr{position:relative}
+  tbody tr:hover td{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+  td.svc{font-weight:600;white-space:nowrap}
+  td.svc .stripe{display:inline-block;width:3px;height:15px;border-radius:2px;
+    margin-right:9px;vertical-align:-2px}
+  td.dom a{font-family:var(--font-mono);font-size:12.5px;color:var(--accent);
+    text-decoration:none;word-break:break-all}
+  td.dom a:hover{text-decoration:underline}
+  td.vert{color:var(--ink-soft);white-space:nowrap}
+  td.region{font-family:var(--font-mono);font-size:12px;color:var(--ink-faint);
+    white-space:nowrap}
+  td.tier{font-size:15px;text-align:center;white-space:nowrap}
+  td.note{color:var(--ink-soft);font-size:12.5px;max-width:340px;line-height:1.45}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);
+    font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px;
+    white-space:nowrap;text-transform:uppercase;letter-spacing:.03em}
+  .pill .dot{width:6px;height:6px;border-radius:50%}
+  .s-done{color:var(--ok);background:var(--ok-bg)} .s-done .dot{background:var(--ok)}
+  .s-queued{color:var(--warn);background:var(--warn-bg)} .s-queued .dot{background:var(--warn)}
+  .s-blocked{color:var(--crit);background:var(--crit-bg)} .s-blocked .dot{background:var(--crit)}
+  .s-new{color:var(--new);background:var(--new-bg)} .s-new .dot{background:var(--new)}
+  .empty{padding:40px;text-align:center;color:var(--ink-faint);font-size:14px}
+
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:18px;font-size:12px;
+    color:var(--ink-faint);font-family:var(--font-mono)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+  footer{margin-top:22px;font-size:12px;color:var(--ink-faint);
+    display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+  footer code{font-family:var(--font-mono);background:var(--surface-2);
+    padding:1px 6px;border-radius:5px;border:1px solid var(--line)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (max-width:560px){.meta{text-align:left}header{align-items:flex-start}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="eyebrow">SMS · Phone-OTP · Recon</span>
+      <h1>OTP Sender — Signals Desk</h1>
+      <p class="sub">Live board of phone-OTP signup targets under investigation. Verticals span fintech, delivery, marketplaces, health &amp; mobility — no India, betting, crypto or telecom operators.</p>
+    </div>
+    <div class="meta">
+      updated <b id="updated">—</b><br>
+      <span id="countline">—</span>
+    </div>
+  </header>
+
+  <section class="tiles" id="tiles" aria-label="Summary"></section>
+
+  <div class="controls">
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="Filter by name, domain, region or vertical…" aria-label="Search targets">
+    </label>
+    <div class="filters" id="statusFilters" role="group" aria-label="Filter by status">
+      <button data-s="" aria-pressed="true">All</button>
+      <button data-s="new" aria-pressed="false">New</button>
+      <button data-s="queued" aria-pressed="false">Queued</button>
+      <button data-s="done" aria-pressed="false">Shipped</button>
+      <button data-s="blocked" aria-pressed="false">Wall</button>
+    </div>
+    <select class="vert" id="vertFilter" aria-label="Filter by vertical"></select>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr>
+        <th>Service</th><th>Status</th><th>Tier</th><th>Domain</th>
+        <th>Vertical</th><th>Region</th><th>Notes</th>
+      </tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+    <div class="empty" id="empty" hidden>No targets match this filter.</div>
+  </div>
+
+  <div class="legend">
+    <span><i style="background:var(--new)"></i>New — verified live, not yet run</span>
+    <span><i style="background:var(--warn)"></i>Queued — awaiting a live test number</span>
+    <span><i style="background:var(--ok)"></i>Shipped — working script + live SMS</span>
+    <span><i style="background:var(--crit)"></i>Wall — app-only / no web OTP</span>
+  </div>
+  <footer>
+    <span>Tier scale:</span>
+    <code>🟢 trivial</code><code>🟡 easy</code><code>🟠 medium</code><code>🔴 hard</code><code>⚫ wall</code>
+    <span style="flex:1"></span>
+    <span id="foot-note"></span>
+  </footer>
+</div>
+
+<script>
+  const DATA = [
+    // ── Batch 2 · fresh set, all verified live 2026-07-27, none ever shown before ──
+    {svc:"HelloFresh",url:"https://hellofresh.com",dom:"hellofresh.com",vert:"Meal kits",region:"Global",status:"new",tier:"",note:"Meal-kit subscription; phone-number account + SMS."},
+    {svc:"Marley Spoon",url:"https://marleyspoon.com",dom:"marleyspoon.com",vert:"Meal kits",region:"US · EU · AU",status:"new",tier:"",note:"Meal-kit subscription; phone account + SMS."},
+    {svc:"Purple Carrot",url:"https://purplecarrot.com",dom:"purplecarrot.com",vert:"Meal kits",region:"US",status:"new",tier:"",note:"Plant-based meal kits; phone account + SMS."},
+    {svc:"CubeSmart",url:"https://cubesmart.com",dom:"cubesmart.com",vert:"Self-storage",region:"US",status:"new",tier:"",note:"Online self-storage rental; phone verification + SMS on move-in."},
+    {svc:"SmartStop",url:"https://smartstop.com",dom:"smartstop.com",vert:"Self-storage",region:"US · CA",status:"new",tier:"",note:"Self-storage app; phone account + SMS gate access."},
+    {svc:"Preply",url:"https://preply.com",dom:"preply.com",vert:"Tutoring",region:"Global",status:"new",tier:"",note:"Language / tutoring marketplace; phone verification."},
+    {svc:"Superprof",url:"https://superprof.com",dom:"superprof.com",vert:"Tutoring",region:"Global · EU",status:"new",tier:"",note:"Tutor marketplace; phone verification on signup."},
+    {svc:"italki",url:"https://italki.com",dom:"italki.com",vert:"Language learning",region:"Global",status:"new",tier:"",note:"Language tutoring; phone-number account + SMS."},
+    {svc:"Fandango",url:"https://fandango.com",dom:"fandango.com",vert:"Cinema ticketing",region:"US",status:"new",tier:"",note:"Movie tickets; phone-number account + SMS."},
+    {svc:"Atom Tickets",url:"https://atomtickets.com",dom:"atomtickets.com",vert:"Cinema ticketing",region:"US",status:"new",tier:"",note:"Movie ticketing; phone-first signup + SMS."},
+    {svc:"Reel Cinemas",url:"https://reelcinemas.ae",dom:"reelcinemas.ae",vert:"Cinema ticketing",region:"UAE",status:"new",tier:"",note:"Dubai cinema chain; phone account + SMS."},
+    {svc:"MATCHi",url:"https://matchi.se",dom:"matchi.se",vert:"Sports court booking",region:"Europe · global",status:"new",tier:"",note:"Racket-sports venue booking; phone account + SMS."},
+    {svc:"Padel Mates",url:"https://padelmates.se",dom:"padelmates.se",vert:"Sports court booking",region:"Global",status:"new",tier:"",note:"Padel booking + community; phone signup."},
+    {svc:"OpenCourt",url:"https://getopencourt.com",dom:"getopencourt.com",vert:"Sports court booking",region:"US · global",status:"new",tier:"",note:"Club booking (padel / tennis / pickleball); phone account."},
+    {svc:"Bookla",url:"https://bookla.com",dom:"bookla.com",vert:"Booking platform",region:"Europe",status:"new",tier:"",note:"Court / appointment booking; phone verification."},
+    {svc:"Sephora",url:"https://sephora.com",dom:"sephora.com",vert:"Beauty e-commerce",region:"Global",status:"new",tier:"",note:"Beauty retail; phone-number account + SMS."},
+    {svc:"ClassPass",url:"https://classpass.com",dom:"classpass.com",vert:"Fitness membership",region:"Global (incl. Dubai)",status:"new",tier:"",note:"Fitness-class marketplace; phone account + SMS."},
+    {svc:"GymNation",url:"https://gymnation.com",dom:"gymnation.com",vert:"Gym membership",region:"UAE · Gulf",status:"new",tier:"",note:"Gulf gym chain; phone signup + SMS."},
+    {svc:"Interhome",url:"https://interhome.com",dom:"interhome.com",vert:"Vacation rental",region:"Europe (20+ countries)",status:"new",tier:"",note:"Holiday-home rental; phone verification."},
+    {svc:"HomeToGo",url:"https://hometogo.com",dom:"hometogo.com",vert:"Vacation rental",region:"Global",status:"new",tier:"",note:"Holiday-rental search / booking; phone account."},
+    {svc:"Ibotta",url:"https://ibotta.com",dom:"ibotta.com",vert:"Cashback & rewards",region:"US",status:"new",tier:"",note:"Cashback shopping; phone-number account + SMS."},
+    {svc:"Fetch",url:"https://fetch.com",dom:"fetch.com",vert:"Cashback & rewards",region:"US",status:"new",tier:"",note:"Receipt-rewards app; phone-number signup + SMS."}
+  ];
+
+  const STATUS_LABEL={new:"New",queued:"Queued",done:"Shipped",blocked:"Wall"};
+  const UPDATED="2026-07-27";
+
+  const $=s=>document.querySelector(s);
+  const esc=s=>(s||"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  let fStatus="", fVert="", fQ="";
+
+  function renderTiles(){
+    const n=DATA.length;
+    const done=DATA.filter(d=>d.status==="done").length;
+    const wall=DATA.filter(d=>d.status==="blocked").length;
+    const pending=DATA.filter(d=>d.status==="new"||d.status==="queued").length;
+    $("#tiles").innerHTML=`
+      <div class="tile total"><span class="n">${n}</span><span class="k">Targets</span><div class="bar"></div></div>
+      <div class="tile ok"><span class="n">${done}</span><span class="k">Shipped</span><div class="bar"></div></div>
+      <div class="tile pending"><span class="n">${pending}</span><span class="k">To investigate</span><div class="bar"></div></div>
+      <div class="tile wall"><span class="n">${wall}</span><span class="k">Walls</span><div class="bar"></div></div>`;
+    $("#updated").textContent=UPDATED;
+    $("#foot-note").textContent=done+" shipped · "+wall+" walls · "+pending+" open";
+  }
+
+  function buildVertFilter(){
+    const verts=[...new Set(DATA.map(d=>d.vert))].sort();
+    $("#vertFilter").innerHTML='<option value="">All verticals</option>'+
+      verts.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
+  }
+
+  function render(){
+    const rows=DATA.filter(d=>{
+      if(fStatus && d.status!==fStatus) return false;
+      if(fVert && d.vert!==fVert) return false;
+      if(fQ){const h=(d.svc+" "+d.dom+" "+d.region+" "+d.vert).toLowerCase();
+        if(!h.includes(fQ)) return false;}
+      return true;
+    });
+    const order={done:0,queued:1,new:2,blocked:3};
+    rows.sort((a,b)=>(order[a.status]-order[b.status])||a.svc.localeCompare(b.svc));
+    const tb=$("#tb");
+    tb.innerHTML=rows.map(d=>{
+      const col={new:"var(--new)",queued:"var(--warn)",done:"var(--ok)",blocked:"var(--crit)"}[d.status];
+      return `<tr>
+        <td class="svc"><span class="stripe" style="background:${col}"></span>${esc(d.svc)}</td>
+        <td><span class="pill s-${d.status}"><span class="dot"></span>${STATUS_LABEL[d.status]}</span></td>
+        <td class="tier">${d.tier||"·"}</td>
+        <td class="dom"><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.dom)}</a></td>
+        <td class="vert">${esc(d.vert)}</td>
+        <td class="region">${esc(d.region)}</td>
+        <td class="note">${esc(d.note)}</td>
+      </tr>`;
+    }).join("");
+    $("#empty").hidden=rows.length>0;
+    $("#countline").textContent=rows.length===DATA.length
+      ? DATA.length+" targets" : rows.length+" of "+DATA.length+" shown";
+  }
+
+  $("#q").addEventListener("input",e=>{fQ=e.target.value.trim().toLowerCase();render();});
+  $("#vertFilter").addEventListener("change",e=>{fVert=e.target.value;render();});
+  $("#statusFilters").addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b)return;
+    fStatus=b.dataset.s;
+    [...$("#statusFilters").children].forEach(x=>x.setAttribute("aria-pressed",x===b));
+    render();
+  });
+
+  renderTiles();buildVertFilter();render();
+</script>

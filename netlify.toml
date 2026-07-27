@@ -1,0 +1,4 @@
+# Netlify config for the OTP dashboard — a single static HTML file, no build step.
+[build]
+  publish = "."
+  command = ""
