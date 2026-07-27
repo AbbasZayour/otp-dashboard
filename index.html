@@ -143,27 +143,30 @@
     display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
   footer code{font-family:var(--font-mono);background:var(--surface-2);
     padding:1px 6px;border-radius:5px;border:1px solid var(--line)}
-  /* shared notes board */
-  .notes-board{background:var(--surface);border:1px solid var(--line);border-radius:12px;
-    box-shadow:var(--shadow);padding:18px 18px 20px;margin-top:22px}
-  .notes-board h2{margin:0 0 2px;font-size:16px;font-weight:700}
-  .notes-board .nsub{color:var(--ink-soft);font-size:12.5px;margin:0 0 14px}
-  .note-form{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-  .note-form input[type=text]{flex:0 0 180px;font:inherit;font-size:13.5px;padding:8px 11px;
-    border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--ink)}
-  .note-form textarea{flex:1 1 260px;min-width:0;font:inherit;font-size:13.5px;padding:8px 11px;
-    border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--ink);
-    resize:vertical;min-height:40px}
-  .note-form button{font:inherit;font-size:13.5px;font-weight:600;padding:8px 18px;border:0;
-    border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;align-self:flex-start}
-  .note-form button:disabled{opacity:.5;cursor:default}
-  .note-list{display:flex;flex-direction:column;gap:10px}
-  .note-item{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--surface-2)}
-  .note-item .nhead{display:flex;justify-content:space-between;gap:10px;margin-bottom:3px}
-  .note-item .nname{font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--accent)}
-  .note-item .ntime{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);white-space:nowrap}
-  .note-item .nbody{font-size:13.5px;color:var(--ink);white-space:pre-wrap;word-break:break-word}
-  .note-status{font-size:12.5px;color:var(--ink-faint);padding:6px 0}
+  /* per-sender community notes */
+  td.cnote{text-align:center;white-space:nowrap}
+  .cbtn{font:inherit;font-family:var(--font-mono);font-size:12px;padding:4px 9px;border:1px solid var(--line);
+    border-radius:7px;background:var(--surface-2);color:var(--ink-soft);cursor:pointer}
+  .cbtn:hover{border-color:var(--accent);color:var(--ink)}
+  .cbtn.has{color:var(--accent);border-color:var(--accent);font-weight:600}
+  tr.cnote-row td{background:color-mix(in srgb,var(--accent) 4%,transparent);padding:0}
+  .cpanel{padding:12px 16px}
+  .cpanel .clist{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+  .citem{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface)}
+  .citem .chead{display:flex;justify-content:space-between;gap:10px;margin-bottom:2px}
+  .citem .cname{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--accent)}
+  .citem .ctime{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);white-space:nowrap}
+  .citem .cbody{font-size:13px;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+  .cempty{font-size:12.5px;color:var(--ink-faint);margin-bottom:10px}
+  .cform{display:flex;flex-wrap:wrap;gap:7px}
+  .cform input[type=text]{flex:0 0 150px;font:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--line);
+    border-radius:7px;background:var(--surface);color:var(--ink)}
+  .cform textarea{flex:1 1 220px;min-width:0;font:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--line);
+    border-radius:7px;background:var(--surface);color:var(--ink);resize:vertical;min-height:36px}
+  .cform button{font:inherit;font-size:13px;font-weight:600;padding:7px 15px;border:0;border-radius:7px;
+    background:var(--accent);color:#fff;cursor:pointer}
+  .cform button:disabled{opacity:.5;cursor:default}
+  .cnote-status{font-size:12px;color:var(--ink-faint);margin-top:6px}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
   @media (max-width:560px){.meta{text-align:left}header{align-items:flex-start}}
 </style>
@@ -202,24 +205,12 @@
     <table>
       <thead><tr>
         <th>Service</th><th>Status</th><th>Tier</th><th>Domain</th>
-        <th>Vertical</th><th>Region</th><th>Notes</th>
+        <th>Vertical</th><th>Region</th><th>Notes</th><th title="Shared notes â€” anyone can add">ðŸ’¬</th>
       </tr></thead>
       <tbody id="tb"></tbody>
     </table>
     <div class="empty" id="empty" hidden>No targets match this filter.</div>
   </div>
-
-  <section class="notes-board">
-    <h2>Shared notes</h2>
-    <p class="nsub">Anyone can post â€” notes are visible to everyone who opens this link.</p>
-    <form class="note-form" id="noteForm">
-      <input type="text" id="noteName" placeholder="Your name (optional)" maxlength="40" autocomplete="off">
-      <textarea id="noteBody" placeholder="Write a noteâ€¦" maxlength="500" rows="1" required></textarea>
-      <button type="submit" id="notePost">Post note</button>
-    </form>
-    <div class="note-status" id="noteStatus"></div>
-    <div class="note-list" id="noteList"></div>
-  </section>
 
   <div class="legend">
     <span><i style="background:var(--new)"></i>New â€” verified live, not yet run</span>
@@ -302,7 +293,8 @@
     const tb=$("#tb");
     tb.innerHTML=rows.map(d=>{
       const col={new:"var(--new)",queued:"var(--warn)",done:"var(--ok)",blocked:"var(--crit)"}[d.status];
-      return `<tr>
+      const cnt=(COMMENTS[d.dom]||[]).length, open=expanded.has(d.dom);
+      const main=`<tr>
         <td class="svc"><span class="stripe" style="background:${col}"></span>${esc(d.svc)}</td>
         <td><span class="pill s-${d.status}"><span class="dot"></span>${STATUS_LABEL[d.status]}</span></td>
         <td class="tier">${d.tier||"Â·"}</td>
@@ -310,7 +302,10 @@
         <td class="vert">${esc(d.vert)}</td>
         <td class="region">${esc(d.region)}</td>
         <td class="note">${esc(d.note)}</td>
+        <td class="cnote"><button class="cbtn ${cnt?'has':''}" data-dom="${esc(d.dom)}">ðŸ’¬ ${cnt}</button></td>
       </tr>`;
+      const panel=open?`<tr class="cnote-row"><td colspan="8">${panelHTML(d.dom)}</td></tr>`:"";
+      return main+panel;
     }).join("");
     $("#empty").hidden=rows.length>0;
     $("#countline").textContent=rows.length===DATA.length
@@ -326,55 +321,64 @@
     render();
   });
 
-  renderTiles();buildVertFilter();render();
-
-  // â”€â”€ Shared notes (Supabase REST â€” anon key is public by design, guarded by RLS) â”€â”€
+  // â”€â”€ Per-sender community notes (Supabase REST â€” publishable key, RLS-guarded) â”€â”€
   const SUPABASE_URL="https://fgnlnpzdzbmkguneiogc.supabase.co";
   const SUPABASE_ANON="sb_publishable_QLjiifaWZPLBs3WTsMlqZQ_6zKmYQQP";
-  const nForm=$("#noteForm"),nName=$("#noteName"),nBody=$("#noteBody"),
-        nPost=$("#notePost"),nList=$("#noteList"),nStatus=$("#noteStatus");
-  const configured=!SUPABASE_URL.startsWith("__");
+  const sbh={apikey:SUPABASE_ANON,Authorization:"Bearer "+SUPABASE_ANON};
+  let COMMENTS={};             // domain -> [notes]
+  const expanded=new Set();    // domains whose panel is open
 
-  function timeAgo(iso){
-    const s=Math.floor((Date.now()-new Date(iso).getTime())/1000);
-    if(s<60)return"just now"; if(s<3600)return Math.floor(s/60)+"m ago";
-    if(s<86400)return Math.floor(s/3600)+"h ago"; return Math.floor(s/86400)+"d ago";
+  function timeAgo(iso){const s=Math.floor((Date.now()-new Date(iso).getTime())/1000);
+    if(s<60)return"just now";if(s<3600)return Math.floor(s/60)+"m ago";
+    if(s<86400)return Math.floor(s/3600)+"h ago";return Math.floor(s/86400)+"d ago";}
+
+  function panelHTML(dom){
+    const list=COMMENTS[dom]||[];
+    const items=list.length?list.map(n=>`<div class="citem">
+        <div class="chead"><span class="cname">${esc(n.name||"Anonymous")}</span>
+          <span class="ctime">${esc(timeAgo(n.created_at))}</span></div>
+        <div class="cbody">${esc(n.body)}</div></div>`).join("")
+      :'<div class="cempty">No notes yet for this sender â€” add the first.</div>';
+    return `<div class="cpanel"><div class="clist">${items}</div>
+      <div class="cform" data-dom="${esc(dom)}">
+        <input type="text" class="cname-in" placeholder="Your name (optional)" maxlength="40" autocomplete="off">
+        <textarea class="cbody-in" placeholder="Add a note for ${esc(dom)}â€¦" maxlength="500" rows="1"></textarea>
+        <button type="button" class="cpost">Post</button></div>
+      <div class="cnote-status"></div></div>`;
   }
-  function renderNotes(rows){
-    if(!rows.length){nList.innerHTML='<div class="note-status">No notes yet â€” be the first to post.</div>';return;}
-    nList.innerHTML=rows.map(r=>`<div class="note-item">
-      <div class="nhead"><span class="nname">${esc(r.name||"Anonymous")}</span>
-        <span class="ntime">${esc(timeAgo(r.created_at))}</span></div>
-      <div class="nbody">${esc(r.body)}</div></div>`).join("");
-  }
-  async function loadNotes(){
-    if(!configured)return;
+  async function loadComments(){
     try{
-      const r=await fetch(`${SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.desc&limit=200`,
-        {headers:{apikey:SUPABASE_ANON,Authorization:"Bearer "+SUPABASE_ANON}});
-      if(!r.ok)throw new Error("HTTP "+r.status);
-      renderNotes(await r.json());
-    }catch(e){nStatus.textContent="Couldn't load notes ("+e.message+").";}
+      const r=await fetch(`${SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.asc&limit=1000`,{headers:sbh});
+      if(!r.ok)return;
+      const g={}; for(const n of await r.json()){const d=n.domain||"_";(g[d]=g[d]||[]).push(n);}
+      COMMENTS=g;
+    }catch(e){}
   }
-  async function postNote(ev){
-    ev.preventDefault();
-    const body=nBody.value.trim(); if(!body)return;
-    nPost.disabled=true;nStatus.textContent="Postingâ€¦";
+  async function postComment(dom,name,body,statusEl,btn){
+    if(!body)return;
+    btn.disabled=true;statusEl.textContent="Postingâ€¦";
     try{
       const r=await fetch(`${SUPABASE_URL}/rest/v1/notes`,{method:"POST",
-        headers:{apikey:SUPABASE_ANON,Authorization:"Bearer "+SUPABASE_ANON,
-          "Content-Type":"application/json",Prefer:"return=minimal"},
-        body:JSON.stringify({name:nName.value.trim()||"Anonymous",body})});
+        headers:{...sbh,"Content-Type":"application/json",Prefer:"return=minimal"},
+        body:JSON.stringify({domain:dom,name:name||"Anonymous",body})});
       if(!r.ok)throw new Error("HTTP "+r.status);
-      nBody.value="";nStatus.textContent="";await loadNotes();
-    }catch(e){nStatus.textContent="Couldn't post ("+e.message+"). Try again.";}
-    nPost.disabled=false;
+      await loadComments();render();
+    }catch(e){statusEl.textContent="Couldn't post ("+e.message+").";btn.disabled=false;}
   }
-  if(!configured){
-    nPost.disabled=true;
-    nStatus.textContent="Shared notes activate once the database is connected.";
-  }else{
-    nForm.addEventListener("submit",postNote);
-    loadNotes();setInterval(loadNotes,15000);
-  }
+  $("#tb").addEventListener("click",e=>{
+    const tgl=e.target.closest(".cbtn");
+    if(tgl){const d=tgl.dataset.dom;expanded.has(d)?expanded.delete(d):expanded.add(d);render();return;}
+    const post=e.target.closest(".cpost");
+    if(post){const f=post.closest(".cform"),dom=f.dataset.dom;
+      postComment(dom,f.querySelector(".cname-in").value.trim(),
+        f.querySelector(".cbody-in").value.trim(),
+        f.parentElement.querySelector(".cnote-status"),post);}
+  });
+  renderTiles();buildVertFilter();render();
+  loadComments().then(render);
+  setInterval(async()=>{
+    const a=document.activeElement;
+    if(a&&(a.classList.contains("cbody-in")||a.classList.contains("cname-in")))return;
+    await loadComments();render();
+  },20000);
 </script>
