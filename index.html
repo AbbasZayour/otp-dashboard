@@ -143,6 +143,27 @@
     display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
   footer code{font-family:var(--font-mono);background:var(--surface-2);
     padding:1px 6px;border-radius:5px;border:1px solid var(--line)}
+  /* shared notes board */
+  .notes-board{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    box-shadow:var(--shadow);padding:18px 18px 20px;margin-top:22px}
+  .notes-board h2{margin:0 0 2px;font-size:16px;font-weight:700}
+  .notes-board .nsub{color:var(--ink-soft);font-size:12.5px;margin:0 0 14px}
+  .note-form{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .note-form input[type=text]{flex:0 0 180px;font:inherit;font-size:13.5px;padding:8px 11px;
+    border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--ink)}
+  .note-form textarea{flex:1 1 260px;min-width:0;font:inherit;font-size:13.5px;padding:8px 11px;
+    border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--ink);
+    resize:vertical;min-height:40px}
+  .note-form button{font:inherit;font-size:13.5px;font-weight:600;padding:8px 18px;border:0;
+    border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;align-self:flex-start}
+  .note-form button:disabled{opacity:.5;cursor:default}
+  .note-list{display:flex;flex-direction:column;gap:10px}
+  .note-item{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--surface-2)}
+  .note-item .nhead{display:flex;justify-content:space-between;gap:10px;margin-bottom:3px}
+  .note-item .nname{font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--accent)}
+  .note-item .ntime{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);white-space:nowrap}
+  .note-item .nbody{font-size:13.5px;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+  .note-status{font-size:12.5px;color:var(--ink-faint);padding:6px 0}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
   @media (max-width:560px){.meta{text-align:left}header{align-items:flex-start}}
 </style>
@@ -187,6 +208,18 @@
     </table>
     <div class="empty" id="empty" hidden>No targets match this filter.</div>
   </div>
+
+  <section class="notes-board">
+    <h2>Shared notes</h2>
+    <p class="nsub">Anyone can post â€” notes are visible to everyone who opens this link.</p>
+    <form class="note-form" id="noteForm">
+      <input type="text" id="noteName" placeholder="Your name (optional)" maxlength="40" autocomplete="off">
+      <textarea id="noteBody" placeholder="Write a noteâ€¦" maxlength="500" rows="1" required></textarea>
+      <button type="submit" id="notePost">Post note</button>
+    </form>
+    <div class="note-status" id="noteStatus"></div>
+    <div class="note-list" id="noteList"></div>
+  </section>
 
   <div class="legend">
     <span><i style="background:var(--new)"></i>New â€” verified live, not yet run</span>
@@ -294,4 +327,54 @@
   });
 
   renderTiles();buildVertFilter();render();
+
+  // â”€â”€ Shared notes (Supabase REST â€” anon key is public by design, guarded by RLS) â”€â”€
+  const SUPABASE_URL="https://fgnlnpzdzbmkguneiogc.supabase.co";
+  const SUPABASE_ANON="sb_publishable_QLjiifaWZPLBs3WTsMlqZQ_6zKmYQQP";
+  const nForm=$("#noteForm"),nName=$("#noteName"),nBody=$("#noteBody"),
+        nPost=$("#notePost"),nList=$("#noteList"),nStatus=$("#noteStatus");
+  const configured=!SUPABASE_URL.startsWith("__");
+
+  function timeAgo(iso){
+    const s=Math.floor((Date.now()-new Date(iso).getTime())/1000);
+    if(s<60)return"just now"; if(s<3600)return Math.floor(s/60)+"m ago";
+    if(s<86400)return Math.floor(s/3600)+"h ago"; return Math.floor(s/86400)+"d ago";
+  }
+  function renderNotes(rows){
+    if(!rows.length){nList.innerHTML='<div class="note-status">No notes yet â€” be the first to post.</div>';return;}
+    nList.innerHTML=rows.map(r=>`<div class="note-item">
+      <div class="nhead"><span class="nname">${esc(r.name||"Anonymous")}</span>
+        <span class="ntime">${esc(timeAgo(r.created_at))}</span></div>
+      <div class="nbody">${esc(r.body)}</div></div>`).join("");
+  }
+  async function loadNotes(){
+    if(!configured)return;
+    try{
+      const r=await fetch(`${SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.desc&limit=200`,
+        {headers:{apikey:SUPABASE_ANON,Authorization:"Bearer "+SUPABASE_ANON}});
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      renderNotes(await r.json());
+    }catch(e){nStatus.textContent="Couldn't load notes ("+e.message+").";}
+  }
+  async function postNote(ev){
+    ev.preventDefault();
+    const body=nBody.value.trim(); if(!body)return;
+    nPost.disabled=true;nStatus.textContent="Postingâ€¦";
+    try{
+      const r=await fetch(`${SUPABASE_URL}/rest/v1/notes`,{method:"POST",
+        headers:{apikey:SUPABASE_ANON,Authorization:"Bearer "+SUPABASE_ANON,
+          "Content-Type":"application/json",Prefer:"return=minimal"},
+        body:JSON.stringify({name:nName.value.trim()||"Anonymous",body})});
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      nBody.value="";nStatus.textContent="";await loadNotes();
+    }catch(e){nStatus.textContent="Couldn't post ("+e.message+"). Try again.";}
+    nPost.disabled=false;
+  }
+  if(!configured){
+    nPost.disabled=true;
+    nStatus.textContent="Shared notes activate once the database is connected.";
+  }else{
+    nForm.addEventListener("submit",postNote);
+    loadNotes();setInterval(loadNotes,15000);
+  }
 </script>
