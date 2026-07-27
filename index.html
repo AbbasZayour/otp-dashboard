@@ -1,11 +1,11 @@
-<title>OTP Sender Recon — Signals Desk</title>
+<title>OTP Sender Recon â€” Signals Desk</title>
 <style>
   :root{
-    /* neutrals biased to blue-slate — chosen, not defaulted */
+    /* neutrals biased to blue-slate â€” chosen, not defaulted */
     --bg:#eef1f4; --surface:#ffffff; --surface-2:#f5f8fa; --line:#d6dde5;
     --ink:#16202b; --ink-soft:#586675; --ink-faint:#8494a3;
     --accent:#0e8f8f; --accent-soft:#0e8f8f22;
-    /* semantic status — distinct from accent */
+    /* semantic status â€” distinct from accent */
     --ok:#0f9d58; --ok-bg:#0f9d5818;
     --warn:#c17d10; --warn-bg:#c17d1018;
     --crit:#d64545; --crit-bg:#d6454518;
@@ -150,13 +150,13 @@
 <div class="wrap">
   <header>
     <div class="brand">
-      <span class="eyebrow">SMS · Phone-OTP · Recon</span>
-      <h1>OTP Sender — Signals Desk</h1>
-      <p class="sub">Live board of phone-OTP signup targets under investigation. Verticals span fintech, delivery, marketplaces, health &amp; mobility — no India, betting, crypto or telecom operators.</p>
+      <span class="eyebrow">SMS Â· Phone-OTP Â· Recon</span>
+      <h1>OTP Sender â€” Signals Desk</h1>
+      <p class="sub">Live board of phone-OTP signup targets under investigation. Verticals span fintech, delivery, marketplaces, health &amp; mobility â€” no India, betting, crypto or telecom operators.</p>
     </div>
     <div class="meta">
-      updated <b id="updated">—</b><br>
-      <span id="countline">—</span>
+      updated <b id="updated">â€”</b><br>
+      <span id="countline">â€”</span>
     </div>
   </header>
 
@@ -165,7 +165,7 @@
   <div class="controls">
     <label class="search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input id="q" type="search" placeholder="Filter by name, domain, region or vertical…" aria-label="Search targets">
+      <input id="q" type="search" placeholder="Filter by name, domain, region or verticalâ€¦" aria-label="Search targets">
     </label>
     <div class="filters" id="statusFilters" role="group" aria-label="Filter by status">
       <button data-s="" aria-pressed="true">All</button>
@@ -189,14 +189,14 @@
   </div>
 
   <div class="legend">
-    <span><i style="background:var(--new)"></i>New — verified live, not yet run</span>
-    <span><i style="background:var(--warn)"></i>Queued — awaiting a live test number</span>
-    <span><i style="background:var(--ok)"></i>Shipped — working script + live SMS</span>
-    <span><i style="background:var(--crit)"></i>Wall — app-only / no web OTP</span>
+    <span><i style="background:var(--new)"></i>New â€” verified live, not yet run</span>
+    <span><i style="background:var(--warn)"></i>Queued â€” awaiting a live test number</span>
+    <span><i style="background:var(--ok)"></i>Shipped â€” working script + live SMS</span>
+    <span><i style="background:var(--crit)"></i>Wall â€” app-only / no web OTP</span>
   </div>
   <footer>
     <span>Tier scale:</span>
-    <code>🟢 trivial</code><code>🟡 easy</code><code>🟠 medium</code><code>🔴 hard</code><code>⚫ wall</code>
+    <code>ðŸŸ¢ trivial</code><code>ðŸŸ¡ easy</code><code>ðŸŸ  medium</code><code>ðŸ”´ hard</code><code>âš« wall</code>
     <span style="flex:1"></span>
     <span id="foot-note"></span>
   </footer>
@@ -204,25 +204,25 @@
 
 <script>
   const DATA = [
-    // ── Batch 2 · fresh set, all verified live 2026-07-27, none ever shown before ──
+    // â”€â”€ Batch 2 Â· fresh set, all verified live 2026-07-27, none ever shown before â”€â”€
     {svc:"HelloFresh",url:"https://hellofresh.com",dom:"hellofresh.com",vert:"Meal kits",region:"Global",status:"new",tier:"",note:"Meal-kit subscription; phone-number account + SMS."},
-    {svc:"Marley Spoon",url:"https://marleyspoon.com",dom:"marleyspoon.com",vert:"Meal kits",region:"US · EU · AU",status:"new",tier:"",note:"Meal-kit subscription; phone account + SMS."},
+    {svc:"Marley Spoon",url:"https://marleyspoon.com",dom:"marleyspoon.com",vert:"Meal kits",region:"US Â· EU Â· AU",status:"new",tier:"",note:"Meal-kit subscription; phone account + SMS."},
     {svc:"Purple Carrot",url:"https://purplecarrot.com",dom:"purplecarrot.com",vert:"Meal kits",region:"US",status:"new",tier:"",note:"Plant-based meal kits; phone account + SMS."},
     {svc:"CubeSmart",url:"https://cubesmart.com",dom:"cubesmart.com",vert:"Self-storage",region:"US",status:"new",tier:"",note:"Online self-storage rental; phone verification + SMS on move-in."},
-    {svc:"SmartStop",url:"https://smartstop.com",dom:"smartstop.com",vert:"Self-storage",region:"US · CA",status:"new",tier:"",note:"Self-storage app; phone account + SMS gate access."},
+    {svc:"SmartStop",url:"https://smartstop.com",dom:"smartstop.com",vert:"Self-storage",region:"US Â· CA",status:"new",tier:"",note:"Self-storage app; phone account + SMS gate access."},
     {svc:"Preply",url:"https://preply.com",dom:"preply.com",vert:"Tutoring",region:"Global",status:"new",tier:"",note:"Language / tutoring marketplace; phone verification."},
-    {svc:"Superprof",url:"https://superprof.com",dom:"superprof.com",vert:"Tutoring",region:"Global · EU",status:"new",tier:"",note:"Tutor marketplace; phone verification on signup."},
+    {svc:"Superprof",url:"https://superprof.com",dom:"superprof.com",vert:"Tutoring",region:"Global Â· EU",status:"new",tier:"",note:"Tutor marketplace; phone verification on signup."},
     {svc:"italki",url:"https://italki.com",dom:"italki.com",vert:"Language learning",region:"Global",status:"new",tier:"",note:"Language tutoring; phone-number account + SMS."},
     {svc:"Fandango",url:"https://fandango.com",dom:"fandango.com",vert:"Cinema ticketing",region:"US",status:"new",tier:"",note:"Movie tickets; phone-number account + SMS."},
     {svc:"Atom Tickets",url:"https://atomtickets.com",dom:"atomtickets.com",vert:"Cinema ticketing",region:"US",status:"new",tier:"",note:"Movie ticketing; phone-first signup + SMS."},
     {svc:"Reel Cinemas",url:"https://reelcinemas.ae",dom:"reelcinemas.ae",vert:"Cinema ticketing",region:"UAE",status:"new",tier:"",note:"Dubai cinema chain; phone account + SMS."},
-    {svc:"MATCHi",url:"https://matchi.se",dom:"matchi.se",vert:"Sports court booking",region:"Europe · global",status:"new",tier:"",note:"Racket-sports venue booking; phone account + SMS."},
+    {svc:"MATCHi",url:"https://matchi.se",dom:"matchi.se",vert:"Sports court booking",region:"Europe Â· global",status:"new",tier:"",note:"Racket-sports venue booking; phone account + SMS."},
     {svc:"Padel Mates",url:"https://padelmates.se",dom:"padelmates.se",vert:"Sports court booking",region:"Global",status:"new",tier:"",note:"Padel booking + community; phone signup."},
-    {svc:"OpenCourt",url:"https://getopencourt.com",dom:"getopencourt.com",vert:"Sports court booking",region:"US · global",status:"new",tier:"",note:"Club booking (padel / tennis / pickleball); phone account."},
+    {svc:"OpenCourt",url:"https://getopencourt.com",dom:"getopencourt.com",vert:"Sports court booking",region:"US Â· global",status:"new",tier:"",note:"Club booking (padel / tennis / pickleball); phone account."},
     {svc:"Bookla",url:"https://bookla.com",dom:"bookla.com",vert:"Booking platform",region:"Europe",status:"new",tier:"",note:"Court / appointment booking; phone verification."},
     {svc:"Sephora",url:"https://sephora.com",dom:"sephora.com",vert:"Beauty e-commerce",region:"Global",status:"new",tier:"",note:"Beauty retail; phone-number account + SMS."},
     {svc:"ClassPass",url:"https://classpass.com",dom:"classpass.com",vert:"Fitness membership",region:"Global (incl. Dubai)",status:"new",tier:"",note:"Fitness-class marketplace; phone account + SMS."},
-    {svc:"GymNation",url:"https://gymnation.com",dom:"gymnation.com",vert:"Gym membership",region:"UAE · Gulf",status:"new",tier:"",note:"Gulf gym chain; phone signup + SMS."},
+    {svc:"GymNation",url:"https://gymnation.com",dom:"gymnation.com",vert:"Gym membership",region:"UAE Â· Gulf",status:"new",tier:"",note:"Gulf gym chain; phone signup + SMS."},
     {svc:"Interhome",url:"https://interhome.com",dom:"interhome.com",vert:"Vacation rental",region:"Europe (20+ countries)",status:"new",tier:"",note:"Holiday-home rental; phone verification."},
     {svc:"HomeToGo",url:"https://hometogo.com",dom:"hometogo.com",vert:"Vacation rental",region:"Global",status:"new",tier:"",note:"Holiday-rental search / booking; phone account."},
     {svc:"Ibotta",url:"https://ibotta.com",dom:"ibotta.com",vert:"Cashback & rewards",region:"US",status:"new",tier:"",note:"Cashback shopping; phone-number account + SMS."},
@@ -247,7 +247,7 @@
       <div class="tile pending"><span class="n">${pending}</span><span class="k">To investigate</span><div class="bar"></div></div>
       <div class="tile wall"><span class="n">${wall}</span><span class="k">Walls</span><div class="bar"></div></div>`;
     $("#updated").textContent=UPDATED;
-    $("#foot-note").textContent=done+" shipped · "+wall+" walls · "+pending+" open";
+    $("#foot-note").textContent=done+" shipped Â· "+wall+" walls Â· "+pending+" open";
   }
 
   function buildVertFilter(){
@@ -272,7 +272,7 @@
       return `<tr>
         <td class="svc"><span class="stripe" style="background:${col}"></span>${esc(d.svc)}</td>
         <td><span class="pill s-${d.status}"><span class="dot"></span>${STATUS_LABEL[d.status]}</span></td>
-        <td class="tier">${d.tier||"·"}</td>
+        <td class="tier">${d.tier||"Â·"}</td>
         <td class="dom"><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.dom)}</a></td>
         <td class="vert">${esc(d.vert)}</td>
         <td class="region">${esc(d.region)}</td>
@@ -295,3 +295,5 @@
 
   renderTiles();buildVertFilter();render();
 </script>
+
+<!-- build-trigger 2026-07-27 -->
