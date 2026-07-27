@@ -342,22 +342,27 @@
   function panelHTML(dom){
     const list=COMMENTS[dom]||[];
     const items=list.length?list.map(n=>`<div class="citem">
-        <div class="chead"><span class="cname">${esc(n.name||"Anonymous")}</span>
+        <div class="chead"><span class="cname">${esc(n.author)}</span>
           <span class="ctime">${esc(timeAgo(n.created_at))}</span></div>
-        <div class="cbody">${esc(n.body)}</div></div>`).join("")
+        <div class="cbody">${esc(n.text)}</div></div>`).join("")
       :'<div class="cempty">No notes yet for this sender — add the first.</div>';
     return `<div class="cpanel"><div class="clist">${items}</div>
       <div class="cform" data-dom="${esc(dom)}">
         <input type="text" class="cname-in" placeholder="Your name (optional)" maxlength="40" autocomplete="off">
-        <textarea class="cbody-in" placeholder="Add a note for ${esc(dom)}…" maxlength="500" rows="1"></textarea>
+        <textarea class="cbody-in" placeholder="Add a note for ${esc(dom)}…" maxlength="400" rows="1"></textarea>
         <button type="button" class="cpost">Post</button></div>
       <div class="cnote-status"></div></div>`;
   }
   async function loadComments(){
     try{
-      const r=await fetch(`${SUPABASE_URL}/rest/v1/notes?select=*&order=created_at.asc&limit=1000`,{headers:sbh});
+      const r=await fetch(`${SUPABASE_URL}/rest/v1/notes?select=name,body,created_at&order=created_at.asc&limit=1000`,{headers:sbh});
       if(!r.ok)return;
-      const g={}; for(const n of await r.json()){const d=n.domain||"_";(g[d]=g[d]||[]).push(n);}
+      const g={};
+      for(const n of await r.json()){
+        const dom=n.name||"_"; let author="Anonymous", text=n.body;
+        try{const p=JSON.parse(n.body); if(p&&typeof p==="object"&&"t" in p){author=p.a||"Anonymous"; text=p.t;}}catch(e){}
+        (g[dom]=g[dom]||[]).push({author,text,created_at:n.created_at});
+      }
       COMMENTS=g;
     }catch(e){}
   }
@@ -367,7 +372,7 @@
     try{
       const r=await fetch(`${SUPABASE_URL}/rest/v1/notes`,{method:"POST",
         headers:{...sbh,"Content-Type":"application/json",Prefer:"return=minimal"},
-        body:JSON.stringify({domain:dom,name:name||"Anonymous",body})});
+        body:JSON.stringify({name:dom,body:JSON.stringify({a:name||"Anonymous",t:body})})});
       if(!r.ok)throw new Error("HTTP "+r.status);
       await loadComments();render();
     }catch(e){statusEl.textContent="Couldn't post ("+e.message+").";btn.disabled=false;}
