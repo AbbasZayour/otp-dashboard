@@ -235,25 +235,16 @@
 
 <script>
   const DATA = [
-    {svc:"Amazon",url:"https://www.amazon.com",dom:"amazon.com",vert:"E-commerce",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen: '926924 is your Amazon OTP')."},
-    {svc:"OpenAI (ChatGPT)",url:"https://chatgpt.com",dom:"chatgpt.com",vert:"AI / tech",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP on signup (real OTP text seen); phone-first."},
-    {svc:"Poe",url:"https://poe.com",dom:"poe.com",vert:"AI / tech",region:"Global",status:"new",tier:"🟢",note:"PROVEN SMS-OTP on signup (real OTP text seen); phone-first."},
-    {svc:"Nike",url:"https://www.nike.com",dom:"nike.com",vert:"Retail / apparel",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone verification."},
-    {svc:"Walmart",url:"https://www.walmart.com",dom:"walmart.com",vert:"Retail",region:"US",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone-first account."},
-    {svc:"Steam",url:"https://store.steampowered.com",dom:"steampowered.com",vert:"Gaming",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone verification."},
-    {svc:"Riot Games",url:"https://www.riotgames.com",dom:"riotgames.com",vert:"Gaming",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone verification."},
-    {svc:"Epic Games",url:"https://www.epicgames.com",dom:"epicgames.com",vert:"Gaming",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone verification."},
-    {svc:"Battle.net",url:"https://www.battle.net",dom:"battle.net",vert:"Gaming",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real text: 'Battle.net verification code: 252294')."},
-    {svc:"Apple",url:"https://appleid.apple.com",dom:"apple.com",vert:"Tech",region:"Global",status:"new",tier:"🟠",note:"PROVEN SMS-OTP (real OTP text seen); Apple ID phone verification."},
-    {svc:"Microsoft",url:"https://signup.live.com",dom:"live.com",vert:"Tech",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone-first account."},
-    {svc:"Yandex",url:"https://yandex.com",dom:"yandex.com",vert:"Internet / tech",region:"Russia / CIS",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone-first account."},
-    {svc:"Reddit",url:"https://www.reddit.com",dom:"reddit.com",vert:"Social",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real text: 'Your Reddit verification code is 927343')."},
-    {svc:"VK",url:"https://vk.com",dom:"vk.com",vert:"Social",region:"Russia / CIS",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real text: 'code to sign in to VK ID'); phone-first."},
-    {svc:"Pinterest",url:"https://www.pinterest.com",dom:"pinterest.com",vert:"Social",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone verification."},
-    {svc:"Craigslist",url:"https://accounts.craigslist.org",dom:"craigslist.org",vert:"Classifieds",region:"US",status:"new",tier:"🟢",note:"PROVEN SMS-OTP (real text: 'craigslist secret code ... is 40669')."},
-    {svc:"Indeed",url:"https://www.indeed.com",dom:"indeed.com",vert:"Jobs",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone verification."},
-    {svc:"Netflix",url:"https://www.netflix.com",dom:"netflix.com",vert:"Streaming",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone account."},
-    {svc:"Booking.com",url:"https://www.booking.com",dom:"booking.com",vert:"Travel",region:"Global",status:"new",tier:"🟡",note:"PROVEN SMS-OTP (real OTP text seen); phone-first login."}
+    {svc:"Cablevision Lebanon",url:"https://myaccount.cablevision.com.lb",dom:"cablevision.com.lb",vert:"ISP / TV self-care",region:"Lebanon",status:"done",tier:"🟢",note:"CONFIRMED live SMS (own recon, script shipped): single POST /api/send-otp, no captcha."},
+    {svc:"Klurrb",url:"https://klurrb.com",dom:"klurrb.com",vert:"Memberships & passes",region:"UK (intl accepted)",status:"done",tier:"🟡",note:"CONFIRMED live SMS (own recon, script shipped): POST /v1/auth/otp/request, behind Cloudflare."},
+    {svc:"Superlive",url:"https://superlivechat.tv",dom:"superlivechat.tv",vert:"Live-stream / video-call social",region:"Global",status:"done",tier:"🟠",note:"CONFIRMED live SMS (own recon, shipped): signup send_phone_verification_code, Firebase App Check gate."},
+    {svc:"Kablewy",url:"https://kablewy.com",dom:"kablewy.com",vert:"Voice / calling",region:"Global",status:"done",tier:"🟡",note:"CONFIRMED live SMS (own recon): single POST /api/verify/send, CF Turnstile."},
+    {svc:"OTaxi (Oman Taxi)",url:"https://omantaxi.om",dom:"omantaxi.om",vert:"Ride-hailing",region:"Oman",status:"new",tier:"🟠",note:"SMS/WhatsApp OTP on web registration (own recon): POST signup_a.php, reCAPTCHA v2 checkbox."},
+    {svc:"Zid",url:"https://zid.sa",dom:"zid.sa",vert:"E-commerce platform",region:"Saudi Arabia",status:"new",tier:"🟠",note:"SMS OTP at signup (own recon): email-OTP then account then phone SMS; CapSolver v3."},
+    {svc:"Sugarbook",url:"https://sugarbook.com",dom:"sugarbook.com",vert:"Dating (PWA)",region:"Global",status:"new",tier:"🟡",note:"SMS OTP send endpoint (own recon): POST /v1/tac/send_verification_code, static app-header gate, no captcha."},
+    {svc:"Directa",url:"https://directa.it",dom:"directa.it",vert:"Stock broker",region:"Italy / EU",status:"new",tier:"🟠",note:"SMS OTP at onboarding (own recon): chained email-OTP then phone SMS; reCAPTCHA v3."},
+    {svc:"GitCode",url:"https://gitcode.com",dom:"gitcode.com",vert:"Code hosting",region:"China + intl",status:"new",tier:"🟠",note:"SMS OTP on register (own recon): POST /sms/send/codeByBiz REGISTER; Huawei WAF + Yidun captcha."},
+    {svc:"Boatsetter",url:"https://www.boatsetter.com",dom:"boatsetter.com",vert:"P2P boat rental",region:"US",status:"new",tier:"🔴",note:"Sends SMS OTP (own recon): Clerk phone_code after signup + email; Turnstile enforced."}
   ];
 
   const STATUS_LABEL={new:"New",queued:"Queued",done:"Shipped",blocked:"Wall"};
