@@ -1,10 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-</head>
-<body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OTP Senders</title></head><body>
 <title>OTP Senders</title>
 <style>
   :root{
@@ -235,20 +229,25 @@
 
 <script>
   const DATA = [
-    {svc:"Cablevision Lebanon",url:"https://myaccount.cablevision.com.lb",dom:"cablevision.com.lb",vert:"ISP / TV self-care",region:"Lebanon",status:"done",tier:"🟢",note:"CONFIRMED live SMS (own recon, script shipped): single POST /api/send-otp, no captcha."},
-    {svc:"Klurrb",url:"https://klurrb.com",dom:"klurrb.com",vert:"Memberships & passes",region:"UK (intl accepted)",status:"done",tier:"🟡",note:"CONFIRMED live SMS (own recon, script shipped): POST /v1/auth/otp/request, behind Cloudflare."},
-    {svc:"Superlive",url:"https://superlivechat.tv",dom:"superlivechat.tv",vert:"Live-stream / video-call social",region:"Global",status:"done",tier:"🟠",note:"CONFIRMED live SMS (own recon, shipped): signup send_phone_verification_code, Firebase App Check gate."},
-    {svc:"Kablewy",url:"https://kablewy.com",dom:"kablewy.com",vert:"Voice / calling",region:"Global",status:"done",tier:"🟡",note:"CONFIRMED live SMS (own recon): single POST /api/verify/send, CF Turnstile."},
-    {svc:"OTaxi (Oman Taxi)",url:"https://omantaxi.om",dom:"omantaxi.om",vert:"Ride-hailing",region:"Oman",status:"new",tier:"🟠",note:"SMS/WhatsApp OTP on web registration (own recon): POST signup_a.php, reCAPTCHA v2 checkbox."},
-    {svc:"Zid",url:"https://zid.sa",dom:"zid.sa",vert:"E-commerce platform",region:"Saudi Arabia",status:"new",tier:"🟠",note:"SMS OTP at signup (own recon): email-OTP then account then phone SMS; CapSolver v3."},
-    {svc:"Sugarbook",url:"https://sugarbook.com",dom:"sugarbook.com",vert:"Dating (PWA)",region:"Global",status:"new",tier:"🟡",note:"SMS OTP send endpoint (own recon): POST /v1/tac/send_verification_code, static app-header gate, no captcha."},
-    {svc:"Directa",url:"https://directa.it",dom:"directa.it",vert:"Stock broker",region:"Italy / EU",status:"new",tier:"🟠",note:"SMS OTP at onboarding (own recon): chained email-OTP then phone SMS; reCAPTCHA v3."},
-    {svc:"GitCode",url:"https://gitcode.com",dom:"gitcode.com",vert:"Code hosting",region:"China + intl",status:"new",tier:"🟠",note:"SMS OTP on register (own recon): POST /sms/send/codeByBiz REGISTER; Huawei WAF + Yidun captcha."},
-    {svc:"Boatsetter",url:"https://www.boatsetter.com",dom:"boatsetter.com",vert:"P2P boat rental",region:"US",status:"new",tier:"🔴",note:"Sends SMS OTP (own recon): Clerk phone_code after signup + email; Turnstile enforced."}
-  ];
+    {svc:"Digikala",url:"https://www.digikala.com",dom:"digikala.com",vert:"E-commerce",region:"Iran",status:"new",tier:"🟢",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Divar",url:"https://divar.ir",dom:"divar.ir",vert:"Classifieds",region:"Iran",status:"new",tier:"🟢",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"SnappFood",url:"https://snappfood.ir",dom:"snappfood.ir",vert:"Food delivery",region:"Iran",status:"new",tier:"🟢",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"e-food",url:"https://www.e-food.gr",dom:"e-food.gr",vert:"Food delivery",region:"Greece",status:"new",tier:"🟡",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"GetNinjas",url:"https://www.getninjas.com.br",dom:"getninjas.com.br",vert:"Services marketplace",region:"Brazil",status:"new",tier:"🟢",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Méliuz",url:"https://www.meliuz.com.br",dom:"meliuz.com",vert:"Cashback / rewards",region:"Brazil",status:"new",tier:"🟡",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Kolesa.kz",url:"https://kolesa.kz",dom:"kolesa.kz",vert:"Auto classifieds",region:"Kazakhstan",status:"new",tier:"🟢",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Onliner",url:"https://www.onliner.by",dom:"onliner.by",vert:"News / marketplace",region:"Belarus",status:"new",tier:"🟡",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Uklon",url:"https://www.uklon.com.ua",dom:"uklon.com.ua",vert:"Ride-hailing",region:"Ukraine",status:"new",tier:"🟢",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"YouGotaGift",url:"https://www.yougotagift.com",dom:"yougotagift.com",vert:"Digital gift cards",region:"UAE / MENA",status:"new",tier:"🟡",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Bitaqaty",url:"https://bitaqaty.com",dom:"bitaqaty.com",vert:"Digital cards / top-ups",region:"Saudi Arabia",status:"new",tier:"🟡",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Mzad Qatar",url:"https://mzadqatar.com",dom:"mzadqatar.com",vert:"Classifieds",region:"Qatar",status:"new",tier:"🟢",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Tosla",url:"https://www.tosla.com",dom:"tosla.com",vert:"Fintech / wallet",region:"Turkey",status:"new",tier:"🟡",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Immowelt",url:"https://www.immowelt.de",dom:"immowelt.de",vert:"Real estate",region:"Germany",status:"new",tier:"🟡",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+    {svc:"Fave",url:"https://myfave.com",dom:"myfave.com",vert:"Rewards / payments",region:"SE Asia",status:"new",tier:"🟡",note:"SMS-OTP confirmed via 5SIM number-rental catalog (stocks only services that deliver SMS codes); live domain, not yet recon'd."},
+];
 
-  const STATUS_LABEL={new:"New",queued:"Queued",done:"Shipped",blocked:"Wall"};
-  const UPDATED="2026-08-05";
+    const STATUS_LABEL={new:"New",queued:"Queued",done:"Shipped",blocked:"Wall"};
+  const UPDATED="2026-08-06";
 
   const $=s=>document.querySelector(s);
   const esc=s=>(s||"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -382,5 +381,4 @@
   },20000);
 </script>
 
-</body>
-</html>
+</body></html>
